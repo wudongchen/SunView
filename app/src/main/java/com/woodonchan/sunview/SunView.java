@@ -3,7 +3,6 @@ package com.woodonchan.sunview;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -105,11 +104,11 @@ public class SunView extends View {
         mReplenishPaint.setStyle(Paint.Style.FILL);
     }
 
-    private float currentPercentage;
+    private float mCurrentPercentage;
 
     private void drawSunView(Canvas canvas) {
 
-        currentPercentage += 0.5;
+        mCurrentPercentage += 0.5;
 
         float left = mWidth - getPaddingRight() - 2 * mRadius;
         float top = mHeight - mRadius - mSunRadius - getPaddingBottom();
@@ -125,7 +124,7 @@ public class SunView extends View {
         Path path = new Path();
         path.addArc(dottedLineRectF, -0, -180);
         PathMeasure measure = new PathMeasure(path, false);
-        float sunDegrees = (float) (180 - currentPercentage * 1.8);
+        float sunDegrees = (float) (180 - mCurrentPercentage * 1.8);
         float[] sunXY = new float[2];
         measure.getPosTan((sunDegrees) * measure.getLength() / 180, sunXY, null);
 
@@ -160,7 +159,7 @@ public class SunView extends View {
         //日出或日落半个太阳的遮罩层
         canvas.drawRect(0, bottom - mRadius + 2, mWidth, bottom - mRadius + mSunRadius + 2, mCoverPaint);
 
-        if (currentPercentage <= ((mSunPercentage > 100) ? 100 : mSunPercentage)) {
+        if (mCurrentPercentage <= ((mSunPercentage > 100) ? 100 : mSunPercentage)) {
             invalidate();
         }
 
