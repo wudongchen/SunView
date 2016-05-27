@@ -71,14 +71,14 @@ public class SunView extends View {
     private void init() {
         mDottedLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mDottedLinePaint.setARGB(255, 254, 226, 174);
-        mDottedLinePaint.setStrokeWidth(5);
+        mDottedLinePaint.setStrokeWidth(4);
         mDottedLinePaint.setStyle(Paint.Style.STROKE);
         PathEffect effects = new DashPathEffect(new float[]{15, 15}, 0);
         mDottedLinePaint.setPathEffect(effects);
 
         mBottomLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBottomLinePaint.setARGB(255, 254, 210, 125);
-        mBottomLinePaint.setStrokeWidth(5);
+        mBottomLinePaint.setStrokeWidth(4);
         mBottomLinePaint.setStyle(Paint.Style.STROKE);
 
         mSunPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -105,25 +105,27 @@ public class SunView extends View {
         mReplenishPaint.setStyle(Paint.Style.FILL);
     }
 
-    private float mCurrentPercentage;
+    private float currentPercentage;
 
     private void drawSunView(Canvas canvas) {
 
-        mCurrentPercentage += 0.5;
+        currentPercentage += 0.5;
 
-        float x = mWidth / 2;
-        float y = mHeight / 2;
+        float left = mWidth - getPaddingRight() - 2 * mRadius;
+        float top = mHeight - mRadius - mSunRadius - getPaddingBottom();
+        float right = left + 2 * mRadius;
+        float bottom = top + 2 * mRadius;
 
         //矩形轮廓
-        RectF dottedLineRectF = new RectF(x - mRadius, y - mRadius, x + mRadius, y + mRadius);
-        float xx = x / 4;
-        dottedLineRectF.inset(xx, xx);
+        RectF dottedLineRectF = new RectF(left, top, right, bottom);
+        float margin = mWidth / 10;
+        dottedLineRectF.inset(margin, margin);
 
         //计算当前角度太阳的坐标
         Path path = new Path();
         path.addArc(dottedLineRectF, -0, -180);
         PathMeasure measure = new PathMeasure(path, false);
-        float sunDegrees = (float) (180 - mCurrentPercentage * 1.8);
+        float sunDegrees = (float) (180 - currentPercentage * 1.8);
         float[] sunXY = new float[2];
         measure.getPosTan((sunDegrees) * measure.getLength() / 180, sunXY, null);
 
@@ -134,13 +136,13 @@ public class SunView extends View {
 
         //太阳扇形阴影多余部分遮盖
         if (sunDegrees >= 90) {
-            RectF rectF = new RectF(sunXY[0], sunXY[1], x, y);
+            RectF rectF = new RectF(sunXY[0], sunXY[1], right, bottom - mRadius);
             canvas.drawRect(rectF, mCoverPaint);
         } else {
             Path trianglePath = new Path();
-            trianglePath.moveTo(x, y);
+            trianglePath.moveTo(left + mRadius, bottom - mRadius);
             trianglePath.lineTo(sunXY[0], sunXY[1]);
-            trianglePath.lineTo(sunXY[0], y);
+            trianglePath.lineTo(sunXY[0], bottom - mRadius);
             canvas.drawPath(trianglePath, mReplenishPaint);
         }
 
@@ -153,12 +155,12 @@ public class SunView extends View {
         canvas.drawCircle(sunXY[0], sunXY[1], mSunRadius - 12, mSunPaint);
 
         //地平线
-        canvas.drawLine(0, y, mWidth, y, mBottomLinePaint);
+        canvas.drawLine(0, bottom - mRadius, mWidth, bottom - mRadius, mBottomLinePaint);
 
         //日出或日落半个太阳的遮罩层
-        canvas.drawRect(0, y + 1, mWidth, y + 1 + mSunRadius, mCoverPaint);
+        canvas.drawRect(0, bottom - mRadius + 2, mWidth, bottom - mRadius + mSunRadius + 2, mCoverPaint);
 
-        if (mCurrentPercentage <= ((mSunPercentage > 100) ? 100 : mSunPercentage)) {
+        if (currentPercentage <= ((mSunPercentage > 100) ? 100 : mSunPercentage)) {
             invalidate();
         }
 
@@ -198,7 +200,7 @@ public class SunView extends View {
                 if (isWidth) {
                     result = Math.max(result, size);
                 } else {
-                    result = Math.max(result, size);
+                    result = Math.min(result, size);
                 }
             }
         }
