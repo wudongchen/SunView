@@ -93,7 +93,7 @@ public class SunView extends View {
         mSunRaysPaint.setPathEffect(sunRaysEffects);
 
         mShadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mShadowPaint.setColor(Color.rgb(255, 238, 205));
+        mShadowPaint.setARGB(255, 255, 238, 205);
         mShadowPaint.setStyle(Paint.Style.FILL);
 
         mCoverPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
