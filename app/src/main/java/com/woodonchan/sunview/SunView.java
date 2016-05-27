@@ -104,7 +104,7 @@ public class SunView extends View {
         mReplenishPaint.setStyle(Paint.Style.FILL);
     }
 
-    private float mCurrentPercentage;
+    private float mCurrentPercentage = -100;
 
     private void drawSunView(Canvas canvas) {
 
